@@ -2,10 +2,12 @@ import db from '@/database-stuff'
 import { users } from '@/database-stuff/users'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
-import * as jwt from 'jsonwebtoken'
+import LoopsClient from 'loops'
+import { otps } from '@/database-stuff/otp'
 
 export async function POST(request: NextRequest) {
-	const { email, username } = await request.json()
+	const { email } = await request.json()
+	const Loops = new LoopsClient(process.env.LOOPS_API_KEY as string)
 
 	const User = await db.query.users.findFirst({
 		where: eq(users.email, email),
@@ -14,25 +16,36 @@ export async function POST(request: NextRequest) {
 	if (!User) {
 		return new NextResponse(
 			'We could not find your account, try signing up',
-			{ status: 500 }
+			{ status: 500, statusText: 'Account does not exist' }
 		)
 	}
 
-	const payload = { username: User.username }
-	const secretKey = process.env.AUTH_SECRET as string
-	const options = { expiresIn: '7h' }
-    const token = jwt.sign(payload, secretKey, options)
+	// Generate OTP
+	const OTP = getRandomToken(4)
 
-    return NextResponse.json({token, User})
+	// Add OTP to db for future reference
+	await db.insert(otps).values({ value: OTP })
 
-	// Check db if we have that username already.
-	// If the username is present then we know this user and want to send him a log-in link.
+	// dataVariables for LOOPS to send OTP email
+	const dataVariables = {
+		name: User.name as string,
+		otp: OTP,
+	}
 
-	// TAKE THESE STEPS
-	// create payload which will contain the user's details.
-	// Generate the token and append it to the email link as a query param
+	const resp = await Loops.sendTransactionalEmail(
+		'clsfeuwty005bzzja0t0qcahn',
+		User.email as string,
+		dataVariables
+	)
 
-	// /api/signInEmailLink?token=['Token'] --> This route redirects to the home page and saves the tokens to cookies.
+	return resp.success
+		? NextResponse.json({ message: 'OTP sent successfully', User })
+		: new NextResponse(`Failed to send OTP`, {
+				status: 500,
+				statusText: 'Error sending OTP',
+		  })
+}
 
-	// If the username is not present return an error response and get the user to sign up instead
+export function getRandomToken(len: number): string {
+	return Math.random().toString(36).substr(2, len)
 }

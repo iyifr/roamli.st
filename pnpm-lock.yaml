@@ -34,9 +34,6 @@ devDependencies:
   '@pandacss/dev':
     specifier: ^0.30.1
     version: 0.30.1(typescript@5.3.3)
-  '@radix-ui/colors':
-    specifier: ^3.0.0
-    version: 3.0.0
   '@types/jsonwebtoken':
     specifier: ^9.0.5
     version: 9.0.5

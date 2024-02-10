@@ -1,14 +1,14 @@
 import { css } from "@/styled-system/css"
 
+const styles = css({
+  fontSize: 24,
+  mx: 12,
+  mt: 5,
+})
+
+
 export default function Page() {
-  const styles = css({
-    fontSize: 24,
-    color: 'blue.800',
-    mx: 12,
-    mt: 5,
-    letterSpacing: 2
-  })
-
-
-  return <div className={styles}>Hi lol I'm here to stay.</div>
+  return <div className={styles}>
+    <p>Hello World the name is iyi fr and i write awesome codes in prod and it's awesome</p>
+  </div>
 }
