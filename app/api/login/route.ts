@@ -1,23 +1,24 @@
-import db from '@/database-stuff'
-import { users } from '@/database-stuff/users'
-import { eq } from 'drizzle-orm'
+import db from '@/db'
+import { users } from '@/db/users'
+import { and, eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import LoopsClient from 'loops'
-import { otps } from '@/database-stuff/otp'
+import { otps } from '@/db/otp'
+import { redirect } from 'next/navigation'
 
 export async function POST(request: NextRequest) {
-	const { email } = await request.json()
+	const { username, email } = await request.json()
 	const Loops = new LoopsClient(process.env.LOOPS_API_KEY as string)
 
 	const User = await db.query.users.findFirst({
-		where: eq(users.email, email),
+		where: and(eq(users.email, email), eq(users.username, username)),
 	})
 
 	if (!User) {
-		return new NextResponse(
-			'We could not find your account, try signing up',
-			{ status: 500, statusText: 'Account does not exist' }
-		)
+		return new NextResponse('We could not find your account, try signing up', {
+			status: 500,
+			statusText: 'Account does not exist',
+		})
 	}
 
 	// Generate OTP
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
 
 	// dataVariables for LOOPS to send OTP email
 	const dataVariables = {
-		name: User.name as string,
+		name: User.firstName ?? (User.username as string),
 		otp: OTP,
 	}
 
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 	)
 
 	return resp.success
-		? NextResponse.json({ message: 'OTP sent successfully', User })
+		? redirect(`/validate-otp/?intent=login?username=${username}?email=${email}`)
 		: new NextResponse(`Failed to send OTP`, {
 				status: 500,
 				statusText: 'Error sending OTP',

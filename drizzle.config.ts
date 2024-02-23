@@ -5,7 +5,7 @@ import { cwd } from 'node:process'
 loadEnvConfig(cwd())
 
 export default {
-	schema: './database-stuff',
+	schema: './db',
 	out: './migrations',
 	driver: 'turso',
 	dbCredentials: {

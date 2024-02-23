@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { css } from "@/styled-system/css";
+import { Theme } from '@radix-ui/themes'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
 
   const styles = css({
-    background: 'slate.3',
+    background: 'slate.2',
     color: 'slate.12',
     minHeight: 'screen',
     fontFamily: 'Inter'
@@ -26,7 +27,11 @@ export default function RootLayout({
 
   return (
     <html lang="en" className="dark">
-      <body className={styles}>{children}</body>
+      <body className={styles}>
+        <Theme appearance="dark" accentColor="indigo" grayColor="slate">
+          {children}
+        </Theme>
+      </body>
     </html>
   );
 }

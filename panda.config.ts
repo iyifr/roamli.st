@@ -20,6 +20,7 @@ export default defineConfig({
 		}),
 		'@pandacss/preset-base',
 	],
+	lightningcss: true,
 })
 
 const theme: Pick<Config, 'theme'>['theme'] = {}

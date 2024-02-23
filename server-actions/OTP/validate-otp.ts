@@ -1,8 +1,8 @@
 'use server'
 
-import db from '@/database-stuff'
-import { otps } from '@/database-stuff/otp'
-import { users } from '@/database-stuff/users'
+import db from '@/db'
+import { otps } from '@/db/otp'
+import { users } from '@/db/users'
 import { eq } from 'drizzle-orm'
 import * as jwt from 'jsonwebtoken'
 
@@ -11,7 +11,6 @@ type User = {
 	name: string | null
 	username: string
 	email: string | null
-	verified: boolean | null
 }
 
 export async function ValidateOTP(OTP: string, User: User) {
@@ -22,12 +21,6 @@ export async function ValidateOTP(OTP: string, User: User) {
 	if (isValidOTP) {
 		// delete the OTP
 		await db.delete(otps).where(eq(otps.value, OTP))
-
-		// update the user status
-		await db
-			.update(users)
-			.set({ verified: true })
-			.where(eq(users.email, User.email as string))
 
 		const payload = { user: User }
 		const secretKey = process.env.AUTH_SECRET as string
