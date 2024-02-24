@@ -1,16 +1,11 @@
-import {
-	Config,
-	defineConfig,
-	defineGlobalStyles,
-} from '@pandacss/dev'
+import { Config, defineConfig, defineGlobalStyles } from '@pandacss/dev'
 import radixColorsPreset from 'pandacss-preset-radix-colors'
+import { Bayon_Font } from './app/layout'
+import { Bayon } from 'next/font/google'
 
 export default defineConfig({
 	preflight: true,
-	include: [
-		'./components/**/*.{ts,tsx,js,jsx}',
-		'./app/**/*.{ts,tsx,js,jsx}',
-	],
+	include: ['./components/**/*.{ts,tsx,js,jsx}', './app/**/*.{ts,tsx,js,jsx}'],
 	exclude: [],
 	outdir: 'styled-system',
 	presets: [
@@ -18,7 +13,6 @@ export default defineConfig({
 			darkMode: true,
 			colorScales: ['slate', 'indigo'],
 		}),
-		'@pandacss/preset-base',
 	],
 	lightningcss: true,
 })

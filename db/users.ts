@@ -6,6 +6,7 @@ const users = sqliteTable('users', {
 	firstName: text('name'),
 	username: text('username').notNull().unique(),
 	email: text('email').unique().unique(),
+	verified: integer('is_verified', { mode: 'boolean' }),
 })
 
 export { users }

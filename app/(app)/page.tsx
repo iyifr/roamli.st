@@ -1,5 +1,6 @@
 import { css } from "@/styled-system/css"
 import { Button } from "@radix-ui/themes"
+import { Bayon_Font } from "../layout"
 
 const styles = css({
   fontSize: 24,
@@ -21,5 +22,7 @@ const buttonStyles = css({
 
 export default function Page() {
   return <div className={styles}>
+    <p className={css({ fontSize: 40, letterSpacing: 1 })}>Hello world</p>
+    <h2 className={css({ fontSize: 30, fontFamily: Bayon_Font.style.fontFamily })}>Hello world</h2>
   </div>
 }
