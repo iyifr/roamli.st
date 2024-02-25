@@ -1,6 +1,6 @@
-import db from '@/db'
-import { otps } from '@/db/otp'
-import { users } from '@/db/users'
+import db from '@/database'
+import { otps } from '@/database/otp'
+import { users } from '@/database/users'
 import { and, eq } from 'drizzle-orm'
 import LoopsClient from 'loops'
 import { generateId } from 'lucia'
@@ -35,11 +35,7 @@ export async function GET(request: NextRequest) {
 		otp: OTP,
 	}
 
-	const resp = await Loops.sendTransactionalEmail(
-		'clsfeuwty005bzzja0t0qcahn',
-		email,
-		dataVariables
-	)
+	const resp = await Loops.sendTransactionalEmail('clsfeuwty005bzzja0t0qcahn', email, dataVariables)
 
 	return resp.success
 		? redirect('/validate-otp/?intent=signup')

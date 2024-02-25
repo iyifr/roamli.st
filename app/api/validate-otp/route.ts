@@ -1,7 +1,7 @@
-import db from '@/db'
-import { otps } from '@/db/otp'
-import userSessions from '@/db/user-session'
-import { users } from '@/db/users'
+import db from '@/database'
+import { otps } from '@/database/otp'
+import userSessions from '@/database/user-session'
+import { users } from '@/database/users'
 import { lucia } from '@/session-auth'
 import { eq } from 'drizzle-orm'
 import { generateId } from 'lucia'
@@ -43,5 +43,5 @@ export async function GET(request: NextRequest) {
 		}
 	}
 
-	return new  NextResponse('Wrong OTP')
+	return new NextResponse('Wrong OTP')
 }

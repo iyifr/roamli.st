@@ -1,5 +1,5 @@
-import { adapter } from '@/db'
-import { users } from '@/db/users'
+import { adapter } from '@/database'
+import { users } from '@/database/users'
 import { Lucia } from 'lucia'
 
 export const lucia = new Lucia(adapter, {
@@ -31,4 +31,3 @@ declare module 'lucia' {
 }
 
 type User = typeof users.$inferSelect
-

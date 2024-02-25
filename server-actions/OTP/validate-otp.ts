@@ -1,8 +1,8 @@
 'use server'
 
-import db from '@/db'
-import { otps } from '@/db/otp'
-import { users } from '@/db/users'
+import db from '@/database'
+import { otps } from '@/database/otp'
+import { users } from '@/database/users'
 import { eq } from 'drizzle-orm'
 import * as jwt from 'jsonwebtoken'
 

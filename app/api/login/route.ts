@@ -1,9 +1,9 @@
-import db from '@/db'
-import { users } from '@/db/users'
+import db from '@/database'
+import { users } from '@/database/users'
 import { and, eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import LoopsClient from 'loops'
-import { otps } from '@/db/otp'
+import { otps } from '@/database/otp'
 import { redirect } from 'next/navigation'
 
 export async function POST(request: NextRequest) {
