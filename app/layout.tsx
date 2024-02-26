@@ -34,8 +34,8 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className={`${Darker.className} ${Bayon_Font.variable} dark`}>
-      <body className="bg-background text-foreground text-lg">
+    <html lang="en" className={`${Darker.className} ${Bayon_Font.variable}`}>
+      <body className="bg-background text-foreground text-lg dark">
         {children}
       </body>
     </html>
