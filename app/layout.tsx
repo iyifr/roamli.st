@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Bayon, Darker_Grotesque, Inter } from "next/font/google";
+import { Bayon, Darker_Grotesque, Hanken_Grotesk, Inter } from "next/font/google";
 import "./globals.css";
-import { css } from "@/styled-system/css";
-import { Theme } from '@radix-ui/themes'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +9,7 @@ export const metadata: Metadata = {
   description: "A corner of the internet for more meaningful real-world experiences",
 };
 
-const Darker = Darker_Grotesque({
+const Darker = Hanken_Grotesk({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-darker-grotesque'
@@ -27,26 +25,18 @@ export const Bayon_Font = Bayon({
 
 export default function RootLayout({
   children,
+  auth
 }: Readonly<{
   children: React.ReactNode;
+  auth: React.ReactNode;
 }>) {
 
-  const styles = css({
-    background: 'slate.2',
-    color: 'slate.12',
-    minHeight: 'screen',
-    '&.header': {
-      fontFamily: Bayon_Font.variable,
-      fontSize: 24
-    }
-  })
+
 
   return (
-    <html lang="en">
-      <body className={styles}>
-        <Theme appearance="dark" accentColor="indigo" grayColor="slate" className={`${Darker.className} ${Bayon_Font.variable}`}>
-          {children}
-        </Theme>
+    <html lang="en" className={`${Darker.className} ${Bayon_Font.variable} dark`}>
+      <body className="bg-background text-foreground text-lg">
+        {children}
       </body>
     </html>
   );

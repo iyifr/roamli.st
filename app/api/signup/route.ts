@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 	const resp = await Loops.sendTransactionalEmail('clsfeuwty005bzzja0t0qcahn', email, dataVariables)
 
 	return resp.success
-		? redirect('/validate-otp/?intent=signup')
+		? redirect('/otp/?intent=signup')
 		: new NextResponse(`Failed to send OTP`, {
 				status: 500,
 				statusText: 'Error sending OTP',

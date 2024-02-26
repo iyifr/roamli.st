@@ -1,10 +1,10 @@
-import { css } from "@/styled-system/css";
-import AppHeader from "./components/app-header";
+import AppHeader from "./ui/app-header";
 import './global.css'
 
-export default function Layout({ children }: { children: React.ReactNode }) {
-    return <main className={css({ maxWidth: '72rem', mx: 'auto', pt: 24, })}>
+export default function Layout({ children, auth }: { children: React.ReactNode, auth: React.ReactNode }) {
+    return <main className="max-w-5xl mx-auto">
         <AppHeader />
         {children}
+        {auth}
     </main>
 }
