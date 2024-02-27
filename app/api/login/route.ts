@@ -40,8 +40,9 @@ export async function POST(request: NextRequest) {
 	)
 
 	return resp.success
-		? redirect(`/otp/?intent=login`)
-		: new NextResponse(`Failed to send OTP`, {
+		? new NextResponse('OTP sent', { status: 200, statusText: 'Successful ' })
+		:
+		  new NextResponse(`Failed to send OTP`, {
 				status: 500,
 				statusText: 'Error sending OTP',
 		  })

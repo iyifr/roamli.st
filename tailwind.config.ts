@@ -17,6 +17,10 @@ const config = {
 			},
 		},
 		extend: {
+			fontFamily: {
+				header: ['var(--font-header)'],
+			},
+
 			colors: {
 				slate: {
 					1: 'var(--slate-1)',
