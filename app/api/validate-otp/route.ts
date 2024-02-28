@@ -3,45 +3,45 @@ import { otps } from '@/database/otp'
 import userSessions from '@/database/user-session'
 import { users } from '@/database/users'
 import { lucia } from '@/session-auth'
+import isValidOTP from '@/session-auth/is-valid-otp'
+import { validateRequest } from '@/session-auth/validate-request'
 import { eq } from 'drizzle-orm'
 import { generateId } from 'lucia'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-	const { OTP, username, email, intent } = await request.json()
+export async function POST(request: NextRequest) {
+	const { OTP } = await request.json()
 
-	const isValidOTP = await db.query.otps.findFirst({
-		where: eq(otps.value, OTP),
-	})
-
-	const existingUser = await db.query.users.findFirst({ where: eq(users.username, username) })
-	if (isValidOTP) {
-		await db.delete(otps).where(eq(otps.value, OTP))
-
-		if (intent === 'signup') {
-			// Add new user to db
-			const userId = generateId(15)
-			const User = await db
-				.insert(users)
-				.values({ id: userId, email, username })
-				.returning({ id: users.id })
-
-			// Create new session for new user
-			const session = await lucia.createSession(User[0].id, {})
-			const sessionCookie = lucia.createSessionCookie(session.id)
-			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
-			return redirect('/')
-		}
-		if (intent === 'login' && existingUser) {
-			// Create session
-			const session = await lucia.createSession(existingUser.id, {})
-			const sessionCookie = lucia.createSessionCookie(session.id)
-			cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
-			return redirect('/')
-		}
+	const { user } = await validateRequest()
+	if (!user) {
+		return new Response(null, {
+			status: 401,
+		})
 	}
 
-	return new NextResponse('Wrong OTP')
+	if (typeof OTP !== 'string') {
+		return new Response(null, {
+			status: 400,
+		})
+	}
+
+	const isValid = isValidOTP(user, OTP)
+
+	if (!isValid) {
+		return new NextResponse('Wrong OTP', { status: 400, statusText: 'OTP is incorrect' })
+	}
+	await lucia.invalidateUserSessions(user.id)
+	await db.update(users).set({ verified: true }).where(eq(users.id, user.id))
+
+	const session = await lucia.createSession(user.id, {})
+	const sessionCookie = lucia.createSessionCookie(session.id)
+	return new Response(null, {
+		status: 302,
+		headers: {
+			Location: '/',
+			'Set-Cookie': sessionCookie.serialize(),
+		},
+	})
 }

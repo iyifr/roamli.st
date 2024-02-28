@@ -2,15 +2,14 @@
 
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 
-export default function Modal({ children }: { children: React.ReactNode }) {
-    return <Dialog>
-        <DialogTrigger>Open</DialogTrigger>
-        <DialogContent>
+export default function Modal({ children, visible, title, setVisible, closeOnClickOutside = true }: { children: React.ReactNode, visible: boolean, title?: string, setVisible?: (val: boolean) => void, closeOnClickOutside?: boolean }) {
+    return <Dialog open={visible} onOpenChange={setVisible ?? undefined}>
+        <DialogTrigger className="hidden">Hello world</DialogTrigger>
+        <DialogContent onPointerDownOutside={(e) => closeOnClickOutside ? null : e.preventDefault()} route>
             <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogTitle className="text-3xl">{title}</DialogTitle>
                 <DialogDescription>
-                    This action cannot be undone. This will permanently delete your account
-                    and remove your data from our servers.
+                    {children}
                 </DialogDescription>
             </DialogHeader>
         </DialogContent>

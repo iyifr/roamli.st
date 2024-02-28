@@ -1,5 +1,16 @@
 import { create } from 'zustand'
 
-const useAuthStore = create((set, get) => ({
-    modalOpen: false
+type State = {
+	modalOpen: boolean
+}
+
+type Actions = {
+	setModalOpen: (state: State['modalOpen']) => void
+}
+
+const useAuthStore = create<State & Actions>((set, get) => ({
+	modalOpen: true,
+	setModalOpen: (state) => set(() => ({ modalOpen: state })),
 }))
+
+export default useAuthStore

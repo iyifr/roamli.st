@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import LoopsClient from 'loops'
 import { otps } from '@/database/otp'
 import { redirect } from 'next/navigation'
+import generateOTP from '@/session-auth/generate-otp'
 
 export async function POST(request: NextRequest) {
 	const { username, email } = await request.json()
@@ -22,10 +23,8 @@ export async function POST(request: NextRequest) {
 	}
 
 	// Generate OTP
-	const OTP = getRandomToken(4)
+	const OTP = await generateOTP(User.id, email)
 
-	// Add OTP to db for future reference
-	await db.insert(otps).values({ value: OTP })
 
 	// dataVariables for LOOPS to send OTP email
 	const dataVariables = {
@@ -40,7 +39,7 @@ export async function POST(request: NextRequest) {
 	)
 
 	return resp.success
-		? new NextResponse('OTP sent', { status: 200, statusText: 'Successful ' })
+		? new NextResponse('OTP sent', { status: 200, statusText: 'OTP sent' })
 		:
 		  new NextResponse(`Failed to send OTP`, {
 				status: 500,

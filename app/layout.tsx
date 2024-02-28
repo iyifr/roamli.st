@@ -34,7 +34,7 @@ export default function RootLayout({
 
 
   return (
-    <html lang="en" className={`${Darker.className} ${Bayon_Font.variable}`}>
+    <html lang="en" className={`${Darker.className} ${Bayon_Font.variable}`} suppressHydrationWarning>
       <body className="bg-background text-foreground text-lg dark">
         {children}
       </body>

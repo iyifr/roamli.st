@@ -7,9 +7,11 @@ import { generateId } from 'lucia'
 import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
 import { getRandomToken } from '../login/route'
+import generateOTP from '@/session-auth/generate-otp'
+import { lucia } from '@/session-auth'
 
-export async function GET(request: NextRequest) {
-	const { firstName, username, email } = await request.json()
+export async function POST(request: NextRequest) {
+	const { username, email } = await request.json()
 	const Loops = new LoopsClient(process.env.LOOPS_API_KEY as string)
 
 	const User = await db.query.users.findFirst({
@@ -23,24 +25,33 @@ export async function GET(request: NextRequest) {
 		})
 	}
 
-	// Generate OTP
-	const OTP = getRandomToken(4)
+	const userId = generateId(15)
+	await db.insert(users).values({ id: userId, email, username, verified: false })
 
-	// Add OTP to db for future reference
-	await db.insert(otps).values({ value: OTP })
+	// Generate OTP
+	const OTP = await generateOTP(userId, email)
 
 	// dataVariables for LOOPS to send OTP email
 	const dataVariables = {
-		name: firstName,
+		name: username,
 		otp: OTP,
 	}
 
 	const resp = await Loops.sendTransactionalEmail('clsfeuwty005bzzja0t0qcahn', email, dataVariables)
+	const session = await lucia.createSession(userId, {})
+	const sessionCookie = lucia.createSessionCookie(session.id)
 
 	return resp.success
-		? new NextResponse('Sent OTP', { status: 200, statusText: 'Sent OTP' })
+		? new NextResponse('Sent OTP', {
+				status: 200,
+				statusText: 'Sent OTP',
+				headers: {
+					'Set-Cookie': sessionCookie.serialize(),
+				},
+		  })
 		: new NextResponse(`Failed to send OTP`, {
 				status: 500,
-				statusText: 'Error sending OTP',
+				// @ts-expect-error
+				statusText: `${resp.error.message}`,
 		  })
 }

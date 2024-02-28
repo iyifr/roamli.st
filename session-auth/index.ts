@@ -18,6 +18,7 @@ export const lucia = new Lucia(adapter, {
 			username: attributes.username,
 			name: attributes.firstName,
 			id: attributes.id,
+			email: attributes.email,
 		}
 	},
 })
